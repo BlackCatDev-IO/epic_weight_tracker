@@ -7,11 +7,20 @@ abstract class WeightEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class WeightUpdated extends WeightEvent {
-  const WeightUpdated({required this.weightEntry});
+class WeightUpdateSubmitted extends WeightEvent {
+  const WeightUpdateSubmitted({required this.weightEntry});
 
   final WeightEntry weightEntry;
 
   @override
   List<Object?> get props => [weightEntry];
+}
+
+class WeightTextEntered extends WeightEvent {
+  const WeightTextEntered({required this.input});
+
+  final String input;
+
+  @override
+  List<Object?> get props => [input];
 }

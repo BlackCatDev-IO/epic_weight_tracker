@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'weight/bloc/weight_bloc.dart';
-import 'weight/bloc/weight_event.dart';
-import 'weight/models/weight_entry.dart';
+import 'weight/view/dialogs/enter_weight_dialog.dart';
 import 'weight/view/widgets/weekly_weight_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -23,12 +22,14 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.read<WeightBloc>().add(
-                WeightUpdated(
-                  weightEntry:
-                      WeightEntry(weight: 200, enteredOn: DateTime.now()),
-                ),
+          showDialog(
+            context: context,
+            builder: (BuildContext newContext) {
+              return EnterWeightDialog(
+                weightBloc: context.read<WeightBloc>(),
               );
+            },
+          );
         },
         child: const Icon(
           Icons.add,
