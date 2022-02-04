@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'core/local_db.dart';
 import 'home_page.dart';
 import 'weight/bloc/weight_bloc.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalDb.initStorage();
   runApp(const MyApp());
 }
 

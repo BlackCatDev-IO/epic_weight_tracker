@@ -1,11 +1,14 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weight_tracker/core/local_db.dart';
 import 'weight_event.dart';
 import 'weight_state.dart';
 
 class WeightBloc extends Bloc<WeightEvent, WeightStatusState> {
-  WeightBloc() : super(const WeightStatusState()) {
+  WeightBloc()
+      : super(
+          WeightStatusState(weightEntries: LocalDb.restoreWeightEntryList()),
+        ) {
     on<WeightUpdateSubmitted>(_onWeightUpdated);
     on<WeightTextEntered>(_onWeightTextEntered);
   }
@@ -16,10 +19,11 @@ class WeightBloc extends Bloc<WeightEvent, WeightStatusState> {
     WeightUpdateSubmitted event,
     Emitter<WeightStatusState> emit,
   ) async {
+    final updatedList = [...state.weightEntries, event.weightEntry];
     emit(state.copyWith(
-        weightEntries: [...state.weightEntries, event.weightEntry],
+        weightEntries: updatedList,
         weightStatus: WeightStatus.averageCalculated));
-    log(state.toString());
+    LocalDb.storeWeightEntries(updatedList: updatedList);
   }
 
   void _onWeightTextEntered(
