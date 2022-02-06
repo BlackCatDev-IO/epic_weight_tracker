@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class WeightEntry extends Equatable {
   final double weight;
-  final DateTime? enteredOn;
+  final DateTime enteredOn;
 
   const WeightEntry({required this.weight, required this.enteredOn});
 

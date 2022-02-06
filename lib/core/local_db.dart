@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:weight_tracker/weight/models/weight_entry.dart';
+
+import '../weight/models/weekly_weight_model.dart';
 
 class LocalDb {
   static const storagePath = 'epic_weight_tracker';
@@ -9,22 +11,28 @@ class LocalDb {
     await Hive.openBox(storagePath);
   }
 
-  static void storeWeightEntries({required List<WeightEntry> updatedList}) {
+  static void storeWeightEntries(
+      {required List<WeeklyWeightModel> updatedList}) {
     final list = updatedList.map((entry) => entry.toMap()).toList();
     Hive.box(storagePath).put('weightEntryList', list);
   }
 
-  static List<WeightEntry> restoreWeightEntryList() {
+  static List<WeeklyWeightModel> restoreWeightEntryList() {
     final listFromStorage = Hive.box(storagePath).get('weightEntryList') ?? [];
-    List<WeightEntry> convertedList = [];
+    List<WeeklyWeightModel> convertedList = [];
 
     if (listFromStorage.isNotEmpty) {
       for (final map in listFromStorage) {
-        final weightEntry = WeightEntry.fromMap(map: map);
+        final weightEntry = WeeklyWeightModel.fromMap(map: map);
         convertedList.add(weightEntry);
       }
     }
 
     return convertedList;
+  }
+
+  @visibleForTesting
+  static void clearStorage() {
+    Hive.box(storagePath).clear();
   }
 }
