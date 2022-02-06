@@ -7,8 +7,8 @@ abstract class WeightEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class WeightUpdateSubmitted extends WeightEvent {
-  const WeightUpdateSubmitted({required this.weightEntry});
+class WeightEntrySubmitted extends WeightEvent {
+  const WeightEntrySubmitted({required this.weightEntry});
 
   final WeightEntry weightEntry;
 
@@ -23,4 +23,13 @@ class WeightTextEntered extends WeightEvent {
 
   @override
   List<Object?> get props => [input];
+}
+
+class EntryDateModified extends WeightEvent {
+  const EntryDateModified({required this.modifiedDate});
+
+  final DateTime modifiedDate;
+
+  @override
+  List<Object?> get props => [modifiedDate];
 }

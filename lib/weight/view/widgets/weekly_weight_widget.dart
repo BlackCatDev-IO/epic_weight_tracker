@@ -12,21 +12,24 @@ class WeeklyWeightWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RoundedContainer(
-      width: 350,
-      borderColor: Colors.black,
-      child: Column(
-        children: [
-          _Header(
-              startingSunday:
-                  DateTimeFormatter.formatDate(model.sundayStartDate),
-              averageWeight: model.averageWeight),
-          const Divider(
-            color: Colors.black,
-          ),
-          for (final dailyEntry in model.weightEntries)
-            _DailyWeightInput(weightEntry: dailyEntry),
-        ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: RoundedContainer(
+        width: 350,
+        borderColor: Colors.black,
+        child: Column(
+          children: [
+            _Header(
+                startingSunday:
+                    DateTimeFormatter.formatDate(model.sundayStartDate),
+                averageWeight: model.averageWeight),
+            const Divider(
+              color: Colors.black,
+            ),
+            for (final dailyEntry in model.weightEntries)
+              _DailyWeightInput(weightEntry: dailyEntry),
+          ],
+        ),
       ),
     );
   }
@@ -52,7 +55,7 @@ class _Header extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              MyTextWidget(text: 'Week of: $startingSunday'),
+              MyTextWidget(text: 'Week of $startingSunday'),
               MyTextWidget(text: 'Avg: $averageWeight')
             ],
           ),

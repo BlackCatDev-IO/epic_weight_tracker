@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:developer';
+import 'package:black_cat_lib/extensions/num_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weight_tracker/core/local_db.dart';
 import '../models/weekly_weight_model.dart';
@@ -11,11 +13,13 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
       : super(
           WeightState(weeklyWeightList: LocalDb.restoreWeightEntryList()),
         ) {
-    on<WeightUpdateSubmitted>(_onWeightUpdated);
+    on<WeightEntrySubmitted>(_onWeightUpdated);
     on<WeightTextEntered>(_onWeightTextEntered);
+    on<EntryDateModified>(_onEntryDateModified);
   }
 
   double weightInput = 0;
+  DateTime entryDate = DateTime.now();
 
   void _onWeightTextEntered(
     WeightTextEntered event,
@@ -25,47 +29,69 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
   }
 
   Future<void> _onWeightUpdated(
-    WeightUpdateSubmitted event,
+    WeightEntrySubmitted event,
     Emitter<WeightState> emit,
   ) async {
     List<WeeklyWeightModel> updatedList = [...state.weeklyWeightList];
-    late WeeklyWeightModel currentModel;
-    final sundayStartDate =
-        _mostRecentSunday(enteredOn: event.weightEntry.enteredOn);
 
-    int updatedIndex = 0;
-
-    if (updatedList.isNotEmpty) {
-      for (int i = 0; i < updatedList.length; i++) {
-        final model = updatedList[i];
+    if (updatedList.isEmpty) {
+      updatedList = _listWithNewWeek(event, updatedList);
+    } else {
+      bool entryAddedToExistingWeek = false;
+      for (final model in state.weeklyWeightList) {
         final isWithinWeek = _isWithinWeek(
             sundayStartDate: model.sundayStartDate,
             entryDate: event.weightEntry.enteredOn);
 
         if (isWithinWeek) {
-          updatedIndex = i;
-
-          currentModel = WeeklyWeightModel(
-            averageWeight: _calcAverageWeight(entryList: model.weightEntries),
-            weightEntries: [...model.weightEntries, event.weightEntry],
-            sundayStartDate: sundayStartDate,
+          final updatedEntryList = [...model.weightEntries, event.weightEntry];
+          final currentModel = WeeklyWeightModel(
+            averageWeight: _calcAverageWeight(entryList: updatedEntryList),
+            weightEntries: updatedEntryList,
+            sundayStartDate:
+                _mostRecentSunday(enteredOn: event.weightEntry.enteredOn),
           );
+          final updatedIndex = updatedList.indexOf(model);
+
+          updatedList
+              .replaceRange(updatedIndex, updatedIndex + 1, [currentModel]);
+          entryAddedToExistingWeek = true;
+          break;
         }
       }
-      updatedList.removeAt(updatedIndex);
-      updatedList.insert(updatedIndex, currentModel);
-    } else {
-      currentModel = WeeklyWeightModel(
-          sundayStartDate: sundayStartDate,
-          weightEntries: [event.weightEntry],
-          averageWeight: event.weightEntry.weight);
-      updatedList.add(currentModel);
+      if (!entryAddedToExistingWeek) {
+        updatedList = _listWithNewWeek(event, updatedList);
+      }
     }
+
+    updatedList = _sortWeeklyList(updatedList);
 
     emit(state.copyWith(
       weeklyWeightList: updatedList,
     ));
+
     LocalDb.storeWeightEntries(updatedList: updatedList);
+    entryDate = DateTime.now();
+  }
+
+  List<WeeklyWeightModel> _listWithNewWeek(
+      WeightEntrySubmitted event, List<WeeklyWeightModel> list) {
+    List<WeeklyWeightModel> newList = list;
+
+    final currentModel = WeeklyWeightModel(
+        sundayStartDate:
+            _mostRecentSunday(enteredOn: event.weightEntry.enteredOn),
+        weightEntries: [event.weightEntry],
+        averageWeight: event.weightEntry.weight);
+    newList.add(currentModel);
+
+    return newList;
+  }
+
+  void _onEntryDateModified(
+      EntryDateModified event, Emitter<WeightState> emit) {
+    entryDate = event.modifiedDate;
+    log(entryDate.toString());
   }
 
   bool _isWithinWeek(
@@ -73,6 +99,17 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
     final endOfWeek = sundayStartDate.add(const Duration(days: 7));
 
     return entryDate.isAfter(sundayStartDate) && entryDate.isBefore(endOfWeek);
+  }
+
+  List<WeeklyWeightModel> _sortWeeklyList(List<WeeklyWeightModel> list) {
+    List<WeeklyWeightModel> sortedList = list;
+    sortedList.sort((a, b) {
+      return a.sundayStartDate
+          .toString()
+          .compareTo(b.sundayStartDate.toString());
+    });
+
+    return sortedList;
   }
 
   DateTime _mostRecentSunday({required DateTime enteredOn}) => DateTime(
@@ -85,6 +122,8 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
       total += entry.weight;
     }
 
-    return total / entryList.length;
+    final average = total / entryList.length;
+
+    return average.toPrecision(1);
   }
 }
