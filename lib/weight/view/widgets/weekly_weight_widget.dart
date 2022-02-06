@@ -2,6 +2,7 @@ import 'package:black_cat_lib/black_cat_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:weight_tracker/weight/models/weight_entry.dart';
 
+import '../../../utils/date_time_formatter.dart';
 import '../../models/weekly_weight_model.dart';
 
 class WeeklyWeightWidget extends StatelessWidget {
@@ -17,7 +18,8 @@ class WeeklyWeightWidget extends StatelessWidget {
       child: Column(
         children: [
           _Header(
-              startingSunday: model.sundayStartDate.toString(),
+              startingSunday:
+                  DateTimeFormatter.formatDate(model.sundayStartDate),
               averageWeight: model.averageWeight),
           const Divider(
             color: Colors.black,
@@ -50,8 +52,8 @@ class _Header extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              MyTextWidget(text: startingSunday),
-              MyTextWidget(text: '$averageWeight')
+              MyTextWidget(text: 'Week of: $startingSunday'),
+              MyTextWidget(text: 'Avg: $averageWeight')
             ],
           ),
         ],
@@ -72,7 +74,9 @@ class _DailyWeightInput extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          MyTextWidget(text: weightEntry!.enteredOn.toString()),
+          MyTextWidget(
+            text: DateTimeFormatter.formatDate(weightEntry!.enteredOn),
+          ),
           MyTextWidget(text: weightEntry!.weight.toString()),
         ],
       ),
