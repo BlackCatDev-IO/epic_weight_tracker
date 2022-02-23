@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:black_cat_lib/black_cat_lib.dart';
@@ -42,7 +41,6 @@ class _DateRowState extends State<_DateRow> {
 
   @override
   void initState() {
-    log('init state');
     super.initState();
     _updateEntryDate(DateTime.now());
   }

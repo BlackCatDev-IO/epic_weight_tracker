@@ -1,10 +1,9 @@
 import 'package:weight_tracker/objectbox.g.dart';
 
 import '../weight/models/weekly_weight_model.dart';
+import '../weight/models/weight_entry.dart';
 
 class LocalDb {
-  static const storagePath = 'epic_weight_tracker';
-
   static late Store _store;
   static late Box _weeklyModelBox;
 
@@ -13,10 +12,8 @@ class LocalDb {
     _weeklyModelBox = _store.box<WeeklyWeightModel>();
   }
 
-  static void storeWeightEntries(
-      {required List<WeeklyWeightModel> updatedList}) {
-    _weeklyModelBox.removeAll();
-    _weeklyModelBox.putMany(updatedList);
+  static void storeOrUpdateModel({required WeeklyWeightModel model}) {
+    _weeklyModelBox.put(model);
   }
 
   static List<WeeklyWeightModel> restoreWeightEntryList() {
@@ -33,5 +30,21 @@ class LocalDb {
     }
 
     return listFromStorage;
+  }
+
+  static WeeklyWeightModel? matchingWeek(
+      {required WeightEntry entry, required DateTime sundayStartDate}) {
+    final matchingWeekQuery = _weeklyModelBox
+        .query(WeeklyWeightModel_.sundayStartDate
+            .equals(sundayStartDate.millisecondsSinceEpoch))
+        .build();
+
+    final matchingWeek = matchingWeekQuery.find();
+
+    if (matchingWeek.isNotEmpty) {
+      return matchingWeekQuery.find()[0];
+    } else {
+      return null;
+    }
   }
 }
