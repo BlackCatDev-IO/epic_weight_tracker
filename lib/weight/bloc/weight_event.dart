@@ -33,3 +33,12 @@ class EntryDateModified extends WeightEvent {
   @override
   List<Object?> get props => [modifiedDate];
 }
+
+class WeightEntryDeleted extends WeightEvent {
+  const WeightEntryDeleted({required this.weightEntry});
+
+  final WeightEntry weightEntry;
+
+  @override
+  List<Object?> get props => [weightEntry];
+}

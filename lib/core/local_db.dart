@@ -21,7 +21,8 @@ class LocalDb {
 
     if (!_weeklyModelBox.isEmpty()) {
       listFromStorage = _weeklyModelBox.getAll() as List<WeeklyWeightModel>;
-      // sorting by date most recent first
+
+      /// sorting by date most recent first
       listFromStorage.sort((a, b) {
         return b.sundayStartDate
             .toString()
@@ -30,6 +31,14 @@ class LocalDb {
     }
 
     return listFromStorage;
+  }
+
+  static void deleteWeeklyWeightModel({required int id}) {
+    _weeklyModelBox.remove(id);
+  }
+
+  static void deleteAll() {
+    _weeklyModelBox.removeAll();
   }
 
   static WeeklyWeightModel? matchingWeek(
@@ -42,7 +51,7 @@ class LocalDb {
     final matchingWeek = matchingWeekQuery.find();
 
     if (matchingWeek.isNotEmpty) {
-      return matchingWeekQuery.find()[0];
+      return matchingWeek[0];
     } else {
       return null;
     }

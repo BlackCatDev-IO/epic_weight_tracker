@@ -16,6 +16,7 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
     on<WeightEntrySubmitted>(_onWeightEntrySubmitted);
     on<WeightTextEntered>(_onWeightTextEntered);
     on<EntryDateModified>(_onEntryDateModified);
+    on<WeightEntryDeleted>(_onWeightEntryDeleted);
   }
 
   double weightInput = 0;
@@ -32,11 +33,9 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
     WeightEntrySubmitted event,
     Emitter<WeightState> emit,
   ) async {
-    List<WeeklyWeightModel> updatedList = [...state.weeklyWeightList];
-
     late WeeklyWeightModel currentModel;
 
-    if (updatedList.isEmpty) {
+    if (state.weeklyWeightList.isEmpty) {
       currentModel = _initAndStoreNewModel(event.weightEntry);
     } else {
       final matchingWeek = LocalDb.matchingWeek(
@@ -64,13 +63,55 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
       }
     }
 
-    updatedList = LocalDb.restoreWeightEntryList();
-
     emit(state.copyWith(
-      weeklyWeightList: updatedList,
+      weeklyWeightList: LocalDb.restoreWeightEntryList(),
     ));
 
     entryDate = DateTime.now();
+  }
+
+  void _onWeightEntryDeleted(
+    WeightEntryDeleted event,
+    Emitter<WeightState> emit,
+  ) {
+    late WeeklyWeightModel currentModel;
+
+    final matchingWeek = LocalDb.matchingWeek(
+      entry: event.weightEntry,
+      sundayStartDate:
+          _mostRecentSunday(enteredOn: event.weightEntry.enteredOn),
+    );
+
+    if (matchingWeek!.weightEntries.length == 1) {
+      LocalDb.deleteWeeklyWeightModel(id: matchingWeek.id);
+      emit(state.copyWith(
+        weeklyWeightList: LocalDb.restoreWeightEntryList(),
+      ));
+      return;
+    }
+
+    final updatedEntryList = <WeightEntry>[];
+
+    for (final entry in matchingWeek.weightEntries) {
+      if (entry != event.weightEntry) {
+        updatedEntryList.add(entry);
+      }
+    }
+
+    matchingWeek.weightEntries = updatedEntryList;
+
+    currentModel = WeeklyWeightModel(
+      id: matchingWeek.id,
+      averageWeight: _calcAverageWeight(entryList: updatedEntryList),
+      weightEntries: matchingWeek.weightEntries,
+      sundayStartDate: matchingWeek.sundayStartDate,
+    );
+
+    LocalDb.storeOrUpdateModel(model: currentModel);
+
+    emit(state.copyWith(
+      weeklyWeightList: LocalDb.restoreWeightEntryList(),
+    ));
   }
 
   WeeklyWeightModel _initAndStoreNewModel(WeightEntry entry) {

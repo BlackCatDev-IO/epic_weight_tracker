@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:black_cat_lib/black_cat_lib.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weight_tracker/weight/models/weight_entry.dart';
 
 import '../../../utils/date_time_formatter.dart';
+import '../../bloc/weight_bloc.dart';
+import '../../bloc/weight_event.dart';
 import '../../models/weekly_weight_model.dart';
 
 class WeeklyWeightWidget extends StatelessWidget {
@@ -16,6 +21,7 @@ class WeeklyWeightWidget extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: RoundedContainer(
         width: 350,
+        color: const Color.fromARGB(183, 0, 0, 0),
         borderColor: Colors.black,
         child: Column(
           children: [
@@ -66,22 +72,28 @@ class _Header extends StatelessWidget {
 }
 
 class _DailyWeightInput extends StatelessWidget {
-  final WeightEntry? weightEntry;
+  final WeightEntry weightEntry;
   const _DailyWeightInput({Key? key, required this.weightEntry})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          MyTextWidget(
-            text: DateTimeFormatter.formatDate(weightEntry!.enteredOn),
-          ),
-          MyTextWidget(text: weightEntry!.weight.toString()),
-        ],
+    return GestureDetector(
+      onLongPress: () => context
+          .read<WeightBloc>()
+          .add(WeightEntryDeleted(weightEntry: weightEntry)),
+      behavior: HitTestBehavior.translucent,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            MyTextWidget(
+              text: DateTimeFormatter.formatDate(weightEntry.enteredOn),
+            ),
+            MyTextWidget(text: weightEntry.weight.toString()),
+          ],
+        ),
       ),
     );
   }
