@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "7976653180",
+    "project_id": "epic-weight-tracker",
+    "storage_bucket": "epic-weight-tracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:7976653180:android:4da0b2f4416f2ba9a314f9",
+        "android_client_info": {
+          "package_name": "com.blackcatdev.epic_weight_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "7976653180-3op91abfl9lbndigev52947cmj6a4ef7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.blackcatdev.epic_weight_tracker",
+            "certificate_hash": "12f8acd1ff80529d9465e6efafe6cb2481693286"
+          }
+        },
+        {
+          "client_id": "7976653180-acs02ubsgmlc5b9j03qtgtbnkgmnmdt9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDM3iXrX4QbMjC4G_E8wU5jEb81fsZUqlE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "7976653180-acs02ubsgmlc5b9j03qtgtbnkgmnmdt9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

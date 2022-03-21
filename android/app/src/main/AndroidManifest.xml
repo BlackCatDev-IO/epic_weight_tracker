@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.weight_tracker">
+    package="com.blackcatdev.epic_weight_tracker">
    <application
         android:label="weight_tracker"
         android:name="${applicationName}"

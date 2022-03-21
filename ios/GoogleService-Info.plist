@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>7976653180-nvhf9tdqi3bcagpcduu12a76ni4mgr4l.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.7976653180-nvhf9tdqi3bcagpcduu12a76ni4mgr4l</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>7976653180-3op91abfl9lbndigev52947cmj6a4ef7.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDO0rPg2mPIl8Ws1uGjL785KLHqTnZvXlE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>7976653180</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.blackcatdev.epic-weight-tracker</string>
+	<key>PROJECT_ID</key>
+	<string>epic-weight-tracker</string>
+	<key>STORAGE_BUCKET</key>
+	<string>epic-weight-tracker.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:7976653180:ios:ce9877bf61242635a314f9</string>
+</dict>
+</plist>
