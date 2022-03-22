@@ -20,10 +20,6 @@
             "package_name": "com.blackcatdev.epic_weight_tracker",
             "certificate_hash": "12f8acd1ff80529d9465e6efafe6cb2481693286"
           }
-        },
-        {
-          "client_id": "7976653180-acs02ubsgmlc5b9j03qtgtbnkgmnmdt9.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -35,8 +31,11 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "7976653180-acs02ubsgmlc5b9j03qtgtbnkgmnmdt9.apps.googleusercontent.com",
-              "client_type": 3
+              "client_id": "7976653180-nvhf9tdqi3bcagpcduu12a76ni4mgr4l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.blackcatdev.epic-weight-tracker"
+              }
             }
           ]
         }

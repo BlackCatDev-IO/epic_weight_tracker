@@ -50,6 +50,10 @@ class WeightBloc extends Bloc<WeightEvent, WeightState> {
           event.weightEntry
         ];
 
+        updatedEntryList.sort((a, b) {
+          return b.enteredOn.toString().compareTo(a.enteredOn.toString());
+        });
+
         currentModel = WeeklyWeightModel(
           id: matchingWeek.id,
           averageWeight: _calcAverageWeight(entryList: updatedEntryList),

@@ -1,15 +1,18 @@
 import 'package:weight_tracker/objectbox.g.dart';
 
+import '../models/user_model.dart';
 import '../weight/models/weekly_weight_model.dart';
 import '../weight/models/weight_entry.dart';
 
 class LocalDb {
   static late Store _store;
   static late Box _weeklyModelBox;
+  static late Box _userBox;
 
   static Future<void> initStorage() async {
     _store = await openStore();
     _weeklyModelBox = _store.box<WeeklyWeightModel>();
+    _userBox = _store.box<User>();
   }
 
   static void storeOrUpdateModel({required WeeklyWeightModel model}) {
@@ -54,6 +57,18 @@ class LocalDb {
       return matchingWeek[0];
     } else {
       return null;
+    }
+  }
+
+  static User? currentUser() {
+    return _userBox.get(1);
+  }
+
+  static void storeOrUpdateUser(User? user) {
+    if (user != null) {
+      _userBox.put(user);
+    } else {
+      _userBox.removeAll();
     }
   }
 }
