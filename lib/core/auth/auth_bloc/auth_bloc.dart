@@ -20,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AppUserChanged>(_onUserChanged);
     on<GoogleSignIn>(_onGoogleSignIn);
     on<Logout>(_onLogoutRequested);
+    on<DeleteUser>(_onDeleteUser);
 
     _userSubscription = _authRepository.user.listen(
       (user) => add(AppUserChanged()),
@@ -48,5 +49,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> close() {
     _userSubscription.cancel();
     return super.close();
+  }
+
+  FutureOr<void> _onDeleteUser(
+      DeleteUser event, Emitter<AuthState> emit) async {
+    await _authRepository.deleteUser();
+    emit(UnAuthenticated());
   }
 }

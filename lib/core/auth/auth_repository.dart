@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -19,23 +20,33 @@ class AuthenticationRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
+  firebase_auth.User? get currentUser => _firebaseAuth.currentUser;
+
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+
   /// Stream of [User] which will emit the current user or null when
   /// not logged in
   Stream<User?> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
       final user = firebaseUser?.toUser;
+
       log('$user');
       LocalDb.storeOrUpdateUser(user);
       return user;
     });
   }
 
-  /// Returns the current cached user or null if not logged in
-  User? get currentUser {
-    return LocalDb.currentUser();
+  FutureOr<void> _addUserToCollection({required String uid}) {
+    return users
+        .doc(uid)
+        .set({
+          'email': currentUser!.email,
+        })
+        .then((value) => log("User Added"))
+        .catchError((error) => log("Failed to add user: $error"));
   }
 
-  bool get isLoggedIn => LocalDb.currentUser() != null;
+  bool get isLoggedIn => currentUser != null;
 
   /// Creates a new user with the provided [email] and [password].
   ///
@@ -58,17 +69,20 @@ class AuthenticationRepository {
   /// Throws a [LogInWithGoogleFailure] if an exception occurs.
   Future<void> logInWithGoogle() async {
     try {
-      late final firebase_auth.AuthCredential credential;
-
       final googleUser = await _googleSignIn.signIn();
       final googleAuth = await googleUser!.authentication;
 
-      credential = firebase_auth.GoogleAuthProvider.credential(
+      final credential = firebase_auth.GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      await _firebaseAuth.signInWithCredential(credential);
+      final info = await _firebaseAuth.signInWithCredential(credential);
+      LocalDb.storeCredential(credential);
+      if (info.additionalUserInfo!.isNewUser) {
+        _addUserToCollection(uid: currentUser!.uid);
+      }
+      log('User logged in via GoogleSignIn');
     } on FirebaseAuthException catch (e) {
       throw LogInWithGoogleFailure.fromCode(e.code);
     } catch (e) {
@@ -108,6 +122,26 @@ class AuthenticationRepository {
       ]);
     } catch (_) {
       throw LogOutFailure();
+    }
+  }
+
+  Future<void> deleteUser() async {
+    final uid = currentUser!.uid;
+    final storedCredential = LocalDb.savedCredential();
+    try {
+      final result = await currentUser!.reauthenticateWithCredential(
+          storedCredential); // handles Firebase 'recent_login_required' exception
+
+      if (storedCredential.signInMethod == 'google.com') {
+        await _googleSignIn.disconnect();
+      }
+      await result.user!.delete();
+      await users.doc(uid).delete();
+      LocalDb.deleteAll();
+    } on FirebaseAuthException catch (e) {
+      log('FirebaseAuthException: code: ${e.code} message: ${e.message}');
+    } catch (e) {
+      log(e.toString());
     }
   }
 }

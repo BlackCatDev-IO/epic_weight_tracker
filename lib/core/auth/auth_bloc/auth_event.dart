@@ -11,6 +11,8 @@ class Logout extends AuthEvent {}
 
 class GoogleSignIn extends AuthEvent {}
 
+class DeleteUser extends AuthEvent {}
+
 class AppUserChanged extends AuthEvent {
   @override
   List<Object> get props => [];

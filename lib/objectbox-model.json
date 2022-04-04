@@ -34,7 +34,7 @@
     },
     {
       "id": "2:4346591425896909237",
-      "lastPropertyId": "4:6677253403582259531",
+      "lastPropertyId": "5:1640895589826076550",
       "name": "User",
       "properties": [
         {
@@ -60,9 +60,43 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "3:2044845766840583753",
+      "lastPropertyId": "5:7208293903133417148",
+      "name": "Credential",
+      "properties": [
+        {
+          "id": "1:1010152892321811902",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:6900901344549927956",
+          "name": "providerId",
+          "type": 9
+        },
+        {
+          "id": "3:1524734494589972610",
+          "name": "signInMethod",
+          "type": 9
+        },
+        {
+          "id": "4:3062484864179479820",
+          "name": "token",
+          "type": 6
+        },
+        {
+          "id": "5:7208293903133417148",
+          "name": "accessToken",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "2:4346591425896909237",
+  "lastEntityId": "3:2044845766840583753",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
@@ -70,7 +104,9 @@
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    1640895589826076550
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

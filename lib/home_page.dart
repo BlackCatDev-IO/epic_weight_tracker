@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'constants.dart';
 import 'core/auth/auth_bloc/auth_bloc.dart';
+import 'core/auth/view/dialogs/confirm_delete_account_dialog.dart';
 import 'core/auth/view/login_screens/login_page.dart';
 import 'weight/bloc/weight_bloc.dart';
 import 'weight/bloc/weight_state.dart';
@@ -107,6 +108,19 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Logout'),
             onTap: () {
               context.read<AuthBloc>().add(Logout());
+            },
+          ),
+          ListTile(
+            title: const Text('Delete Account'),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext newContext) {
+                  return ConfirmDeleteAccountDialog(
+                    authBloc: context.read<AuthBloc>(),
+                  );
+                },
+              );
             },
           ),
         ],

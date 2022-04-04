@@ -56,8 +56,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/gym _bg.png
-    - assets/
     - assets/icons/
     - assets/images/
 
